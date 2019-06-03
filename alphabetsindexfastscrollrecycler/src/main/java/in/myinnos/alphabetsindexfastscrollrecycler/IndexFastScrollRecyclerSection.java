@@ -1,27 +1,23 @@
 package in.myinnos.alphabetsindexfastscrollrecycler;
 
-/**
- * Created by MyInnos on 31-01-2017.
- */
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.widget.SectionIndexer;
 
 import androidx.annotation.ColorInt;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.os.Handler;
-import android.os.Message;
-import android.os.SystemClock;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.widget.SectionIndexer;
+
+/**
+ * Created by MyInnos on 31-01-2017.
+ */
 
 public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObserver {
 
@@ -34,14 +30,12 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
     private int mListViewHeight;
     private int mCurrentSection = -1;
     private boolean mIsIndexing = false;
-    private RecyclerView mRecyclerView = null;
-    private SectionIndexer mIndexer = null;
-    private String[] mSections = null;
+    private RecyclerView mRecyclerView;
+    private SectionIndexer indexer = null;
+    private String[] sections = null;
     private RectF mIndexbarRect;
 
     private int setIndexTextSize;
-    private float setIndexbarWidth;
-    private float setIndexbarMargin;
     private int setPreviewPadding;
     private boolean previewVisibility = true;
     private int setIndexBarCornerRadius;
@@ -63,14 +57,11 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
     private int previewBackgroudAlpha;
     private int indexbarBackgroudAlpha;
 
-    private int indexPaintPaintColor = Color.WHITE;
-    AttributeSet attrs;
-
     public IndexFastScrollRecyclerSection(Context context, IndexFastScrollRecyclerView rv) {
 
         setIndexTextSize = rv.setIndexTextSize;
-        setIndexbarWidth = rv.mIndexbarWidth;
-        setIndexbarMargin = rv.mIndexbarMargin;
+        float setIndexbarWidth = rv.mIndexbarWidth;
+        float setIndexbarMargin = rv.mIndexbarMargin;
         setPreviewPadding = rv.mPreviewPadding;
         setPreviewTextSize = rv.mPreviewTextSize;
         previewBackgroundColor = rv.mPreviewBackgroudColor;
@@ -104,9 +95,9 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
             indexbarPaint.setAntiAlias(true);
             canvas.drawRoundRect(mIndexbarRect, setIndexBarCornerRadius * mDensity, setIndexBarCornerRadius * mDensity, indexbarPaint);
 
-            if (mSections != null && mSections.length > 0) {
+            if (sections != null && sections.length > 0) {
                 // Preview is shown when mCurrentSection is set
-                if (previewVisibility && mCurrentSection >= 0 && mSections[mCurrentSection] != "") {
+                if (previewVisibility && mCurrentSection >= 0 && !sections[mCurrentSection].equals("")) {
                     Paint previewPaint = new Paint();
                     previewPaint.setColor(previewBackgroundColor);
                     previewPaint.setAlpha(previewBackgroudAlpha);
@@ -119,7 +110,7 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
                     previewTextPaint.setTextSize(setPreviewTextSize * mScaledDensity);
                     previewTextPaint.setTypeface(setTypeface);
 
-                    float previewTextWidth = previewTextPaint.measureText(mSections[mCurrentSection]);
+                    float previewTextWidth = previewTextPaint.measureText(sections[mCurrentSection]);
                     float previewSize = 2 * mPreviewPadding + previewTextPaint.descent() - previewTextPaint.ascent();
                     previewSize = Math.max(previewSize, previewTextWidth + 2 * mPreviewPadding);
                     RectF previewRect = new RectF((mListViewWidth - previewSize) / 2
@@ -128,7 +119,7 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
                             , (mListViewHeight - previewSize) / 2 + previewSize);
 
                     canvas.drawRoundRect(previewRect, 5 * mDensity, 5 * mDensity, previewPaint);
-                    canvas.drawText(mSections[mCurrentSection], previewRect.left + (previewSize - previewTextWidth) / 2 - 1
+                    canvas.drawText(sections[mCurrentSection], previewRect.left + (previewSize - previewTextWidth) / 2 - 1
                             , previewRect.top + (previewSize - (previewTextPaint.descent() - previewTextPaint.ascent())) / 2 - previewTextPaint.ascent(), previewTextPaint);
                     fade(300);
                 }
@@ -139,9 +130,9 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
                 indexPaint.setTextSize(setIndexTextSize * mScaledDensity);
                 indexPaint.setTypeface(setTypeface);
 
-                float sectionHeight = (mIndexbarRect.height() - 2 * mIndexbarMargin) / mSections.length;
+                float sectionHeight = (mIndexbarRect.height() - 2 * mIndexbarMargin) / sections.length;
                 float paddingTop = (sectionHeight - (indexPaint.descent() - indexPaint.ascent())) / 2;
-                for (int i = 0; i < mSections.length; i++) {
+                for (int i = 0; i < sections.length; i++) {
 
                     if (setSetIndexBarHighLateTextVisibility) {
 
@@ -154,14 +145,14 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
                             indexPaint.setTextSize(setIndexTextSize * mScaledDensity);
                             indexPaint.setColor(indexbarTextColor);
                         }
-                        float paddingLeft = (mIndexbarWidth - indexPaint.measureText(mSections[i])) / 2;
-                        canvas.drawText(mSections[i], mIndexbarRect.left + paddingLeft
+                        float paddingLeft = (mIndexbarWidth - indexPaint.measureText(sections[i])) / 2;
+                        canvas.drawText(sections[i], mIndexbarRect.left + paddingLeft
                                 , mIndexbarRect.top + mIndexbarMargin + sectionHeight * i + paddingTop - indexPaint.ascent(), indexPaint);
 
 
                     } else {
-                        float paddingLeft = (mIndexbarWidth - indexPaint.measureText(mSections[i])) / 2;
-                        canvas.drawText(mSections[i], mIndexbarRect.left + paddingLeft
+                        float paddingLeft = (mIndexbarWidth - indexPaint.measureText(sections[i])) / 2;
+                        canvas.drawText(sections[i], mIndexbarRect.left + paddingLeft
                                 , mIndexbarRect.top + mIndexbarMargin + sectionHeight * i + paddingTop - indexPaint.ascent(), indexPaint);
                     }
 
@@ -208,12 +199,14 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
 
     private void scrollToPosition() {
         try {
-            int position = mIndexer.getPositionForSection(mCurrentSection);
+            int position = indexer.getPositionForSection(mCurrentSection);
             RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
             if (layoutManager instanceof LinearLayoutManager) {
                 ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(position, 0);
             } else {
-                layoutManager.scrollToPosition(position);
+                if (layoutManager != null) {
+                    layoutManager.scrollToPosition(position);
+                }
             }
         } catch (Exception e) {
             Log.d("INDEX_BAR", "Data size returns null");
@@ -232,8 +225,8 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
     public void setAdapter(RecyclerView.Adapter adapter) {
         if (adapter instanceof SectionIndexer) {
             adapter.registerAdapterDataObserver(this);
-            mIndexer = (SectionIndexer) adapter;
-            mSections = (String[]) mIndexer.getSections();
+            indexer = (SectionIndexer) adapter;
+            updateSections();
         }
     }
 
@@ -244,7 +237,12 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
     }
 
     public void updateSections() {
-        mSections = (String[]) mIndexer.getSections();
+        Object[] sections = indexer.getSections();
+        String[] sectionsStrings = new String[sections.length];
+        for (int i = 0; i < sections.length; i++) {
+            sectionsStrings[i] = sections[i].toString();
+        }
+        this.sections = sectionsStrings;
     }
 
     public boolean contains(float x, float y) {
@@ -253,13 +251,13 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
     }
 
     private int getSectionByPoint(float y) {
-        if (mSections == null || mSections.length == 0)
+        if (sections == null || sections.length == 0)
             return 0;
         if (y < mIndexbarRect.top + mIndexbarMargin)
             return 0;
         if (y >= mIndexbarRect.top + mIndexbarRect.height() - mIndexbarMargin)
-            return mSections.length - 1;
-        return (int) ((y - mIndexbarRect.top - mIndexbarMargin) / ((mIndexbarRect.height() - 2 * mIndexbarMargin) / mSections.length));
+            return sections.length - 1;
+        return (int) ((y - mIndexbarRect.top - mIndexbarMargin) / ((mIndexbarRect.height() - 2 * mIndexbarMargin) / sections.length));
     }
 
     private Runnable mLastFadeRunnable = null;

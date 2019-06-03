@@ -1,21 +1,21 @@
 package in.myinnos.alphabetsindexfastscrollrecycler;
 
-/**
- * Created by MyInnos on 31-01-2017.
- */
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
+
+/**
+ * Created by MyInnos on 31-01-2017.
+ */
 
 public class IndexFastScrollRecyclerView extends RecyclerView {
 
@@ -46,6 +46,7 @@ public class IndexFastScrollRecyclerView extends RecyclerView {
 
     public IndexFastScrollRecyclerView(Context context) {
         super(context);
+        mScroller = new IndexFastScrollRecyclerSection(context, this);
     }
 
     public IndexFastScrollRecyclerView(Context context, AttributeSet attrs) {
@@ -108,7 +109,7 @@ public class IndexFastScrollRecyclerView extends RecyclerView {
                     if (typedArray.hasValue(R.styleable.IndexFastScrollRecyclerView_setPreviewTextColor)) {
                         mPreviewTextColor = Color.parseColor(typedArray.getString(R.styleable.IndexFastScrollRecyclerView_setPreviewTextColor));
                     }
-                    
+
                 } finally {
                     typedArray.recycle();
                 }
