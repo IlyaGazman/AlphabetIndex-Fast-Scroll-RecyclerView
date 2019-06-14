@@ -1,6 +1,4 @@
 apply plugin: 'com.android.library'
-final ANDROIDX = '1.0.0'
-apply plugin: 'com.github.dcendents.android-maven' // ADD THIS
 
 group='com.github.jitpack'
 
@@ -21,18 +19,9 @@ android {
     }
 }
 
-allprojects {
-    repositories {
-        jcenter()
-        maven {
-            url "https://maven.google.com"
-        }
-    }
-}
-
 dependencies {
-    implementation "androidx.appcompat:appcompat:${ANDROIDX}"
-    implementation "com.google.android.material:material:${ANDROIDX}"
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
 }
 
 // build a jar with source files
@@ -58,12 +47,3 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
-
-// uncomment to build a jar file in addition to the default aar file
-//android.libraryVariants.all { variant ->
-//    def name = variant.buildType.name
-//    def task = project.tasks.create "jar${name.capitalize()}", Jar
-//    task.dependsOn variant.javaCompile
-//    task.from variant.javaCompile.destinationDir
-//    artifacts.add('archives', task);
-//}

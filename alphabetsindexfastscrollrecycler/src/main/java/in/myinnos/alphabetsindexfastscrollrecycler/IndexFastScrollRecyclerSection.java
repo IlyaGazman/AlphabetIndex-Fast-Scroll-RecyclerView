@@ -121,7 +121,7 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
                     canvas.drawRoundRect(previewRect, 5 * mDensity, 5 * mDensity, previewPaint);
                     canvas.drawText(sections[mCurrentSection], previewRect.left + (previewSize - previewTextWidth) / 2 - 1
                             , previewRect.top + (previewSize - (previewTextPaint.descent() - previewTextPaint.ascent())) / 2 - previewTextPaint.ascent(), previewTextPaint);
-                    fade(300);
+                    fade();
                 }
 
                 Paint indexPaint = new Paint();
@@ -262,7 +262,7 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
 
     private Runnable mLastFadeRunnable = null;
 
-    private void fade(long delay) {
+    private void fade() {
         if (mRecyclerView != null) {
             if (mLastFadeRunnable != null) {
                 mRecyclerView.removeCallbacks(mLastFadeRunnable);
@@ -273,7 +273,7 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
                     mRecyclerView.invalidate();
                 }
             };
-            mRecyclerView.postDelayed(mLastFadeRunnable, delay);
+            mRecyclerView.postDelayed(mLastFadeRunnable, (long) 300);
         }
     }
 
