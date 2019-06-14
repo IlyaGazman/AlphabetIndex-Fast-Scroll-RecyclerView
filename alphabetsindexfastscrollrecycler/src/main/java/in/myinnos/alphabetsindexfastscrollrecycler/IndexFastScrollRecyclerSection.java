@@ -216,10 +216,23 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
     public void onSizeChanged(int w, int h, int oldw, int oldh) {
         mListViewWidth = w;
         mListViewHeight = h;
-        mIndexbarRect = new RectF(w - mIndexbarMargin - mIndexbarWidth
-                , mIndexbarMargin
-                , w - mIndexbarMargin
-                , h - mIndexbarMargin);
+
+        boolean isRightToLeft = mRecyclerView != null && mRecyclerView.getResources().getBoolean(R.bool.is_right_to_left);
+
+        if(isRightToLeft){
+            mIndexbarRect = new RectF(mIndexbarMargin
+                    , mIndexbarMargin
+                    , mIndexbarMargin + mIndexbarWidth
+                    , h - mIndexbarMargin);
+        }
+        else{
+            mIndexbarRect = new RectF(w - mIndexbarMargin - mIndexbarWidth
+                    , mIndexbarMargin
+                    , w - mIndexbarMargin
+                    , h - mIndexbarMargin);
+        }
+
+
     }
 
     public void setAdapter(RecyclerView.Adapter adapter) {
@@ -247,7 +260,7 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
 
     public boolean contains(float x, float y) {
         // Determine if the point is in index bar region, which includes the right margin of the bar
-        return (x >= mIndexbarRect.left && y >= mIndexbarRect.top && y <= mIndexbarRect.top + mIndexbarRect.height());
+        return mIndexbarRect.contains(x, y);
     }
 
     private int getSectionByPoint(float y) {
