@@ -11,10 +11,11 @@ import android.widget.ImageButton;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.myinnos.indexfastscrollrecycler.R;
